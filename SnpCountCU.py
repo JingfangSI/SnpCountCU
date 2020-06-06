@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 '''
-@author:     Jingfang SI
-@copyright:  2019 China Agricultural University. All rights reserved.
-@contact:    sijingfang@foxmail.com
+"This script is used to count the number of SNPs that are common among 
+population and unique within population from VCF formart file."
 '''
+
+__author__      = "Jingfang SI"
+__version__     = "1.0"
+__email__       = "sijingfang@foxmail.com"
+__date__        = "2020-06-06"
+
 
 import sys
 import os
@@ -69,18 +75,14 @@ def count(allele_list):
     # count_UNKNOWN = np.size(allele_array[allele_array == 2])
     count_HOM_ALT = np.size(allele_array[allele_array == 3])
     
-    # count_ALL = 2 * count_size
-    # count_1 = 2 * count_HOM_ALT + count_HET
-    # freq_1 = count_1 / count_ALL
-
-    count_ALL = count_size
-    count_GT_ALT = count_HOM_ALT + count_HET
-    freq_GT_ALT = count_GT_ALT / count_ALL
-    return freq_GT_ALT
+    count_ALL = 2 * count_size
+    count_ALT = 2 * count_HOM_ALT + count_HET
+    freq_ALT = count_ALT / count_ALL
+    return freq_ALT
 
 def count_snp_index(count_out, pop, pop_index, feq_threshold):
     '''
-    using number 0,1,2,3,4 ... repersent snp id in count_out, extract a list of snps of which genotype frequence larger than threshold
+    using number 0,1,2,3,4 ... repersent snp id in count_out, extract a list of snps of which ALT allele frequence greater than the threshold
     '''
     threshold = feq_threshold
     i = 0
@@ -202,33 +204,23 @@ def final_run(in_file, chrom, list_pop, dict_id_pop, common_pop, out_file):
     print('\n')
 
 if __name__ == '__main__':
-    process = psutil.Process(os.getpid())
-    print("[{}] INFO: PID:{}  MEM:{:.2f}MB".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), process.pid, process.memory_info().rss / 1000000))
-
-    parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    description="Convert VCF format to fasta format (per sample).",
-
-    )
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawDescriptionHelpFormatter, description = __doc__)
     parser.add_argument("-v", "--vcf", required = True, 
                         help = "Name of the input vcf file, must be gziped and indexed by 'bcftools index'")
     parser.add_argument("-l", "--list", required = True, 
-                        help = "Name of the input population list with two columns: pop_id sample_id")
+                        help = "Name of the input population list, two columns: pop_id sample_id")
     parser.add_argument("-r","--region", required = True, 
-                        help = "Name the target chromosome or region")
+                        help = "Name the input list file, one chromosome name per line")
     parser.add_argument("-o", "--out", required = True, 
                         help = "Name of the output file")
-
     parser.add_argument("-f", "--freq-threshold", required = False, type = float, default = 0.00001,
-                        help="Positions of which non-reference genotype frequence larger than this number are regarded as existing in a population.")
-    
+                        help="A frequence threshold value, SNPs with ALT allele frequence greater than this value are regarded as existing in a population.(default: 0.00001)")
     parser.add_argument("--common-pop", required = False, type = str, default = None,
-                        help="Use all the populations in the list by default, or specify in 'GroupA:pop1,pop2,pop3;GroupB:pop4,pop5' ")
-
+                        help="Add additional population combinations to count common snp, e.g. 'GroupA:pop1,pop2,pop3;GroupB:pop4,pop5'")
     parser.add_argument("-nt", "--num-threads", required = False, type = int, default = 1,
-                        help = "Specify the number of data threads")
+                        help = "Number of threads. This value should be lower than the number of populations in the list, otherwise it will not provide additional efficiency")
     args = parser.parse_args()
-        
+
     in_file = args.vcf
     in_list = args.list
 
@@ -255,6 +247,6 @@ if __name__ == '__main__':
     ## start the loop of chromosomes
     for chrom in chrom_list:
         final_run(in_file, chrom, list_pop, dict_id_pop, args.common_pop, args.out)
-            
+
     print( '[{0}] INFO: Done'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) )
 
