@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-"This script is used to count the number of SNPs that are common among 
-population and unique within population from VCF formart file."
+This script is used to count the number of SNPs that are common among 
+population and unique within population from VCF formart file.
 '''
 
 __author__      = "Jingfang SI"
