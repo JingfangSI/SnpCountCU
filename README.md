@@ -18,7 +18,8 @@ Just type `python3 SnpCountCU.py -h` or `./SnpCountCU.py -h` to show the help of
 usage: SnpCountCU.py [-h] -v VCF -l LIST -r REGION -o OUT [-f FREQ_THRESHOLD]
                      [--common-pop COMMON_POP] [-nt NUM_THREADS]
 
-This script is used to count the number of SNPs that are common among population and unique within population from VCF formart file.
+This script is used to count the number of SNPs that are common among
+population and unique within population from VCF formart file.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -30,16 +31,15 @@ optional arguments:
                         Name the input list file, one chromosome name per line
   -o OUT, --out OUT     Name of the output file
   -f FREQ_THRESHOLD, --freq-threshold FREQ_THRESHOLD
-                        A frequence threshold value, SNPs with non-REF
-                        genotype frequence greater than this value are
-                        regarded as existing in a population.(default:
-                        0.00001)
+                        A frequence threshold value, SNPs with ALT allele
+                        frequence greater than this value are regarded as
+                        existing in a population.(default: 0.00001)
   --common-pop COMMON_POP
                         Add additional population combinations to count common
                         snp, e.g. 'GroupA:pop1,pop2,pop3;GroupB:pop4,pop5'
   -nt NUM_THREADS, --num-threads NUM_THREADS
                         Number of threads. This value should be lower than the
-                        number of population in the list, otherwise it will
+                        number of populations in the list, otherwise it will
                         not provide additional efficiency
 ```
 
